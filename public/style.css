@@ -1,0 +1,845 @@
+/* 🔥 RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* 🌑 BACKGROUND */
+body {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ☀️ LIGHT MODE */
+.light-mode {
+  background: #f5f5f5;
+  color: #111;
+}
+
+/* 🔥 LAYOUT */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* ========================
+   🔥 SIDEBAR
+======================== */
+.sidebar-mini {
+  width: 48px;
+  backdrop-filter: blur(20px);
+  background: rgba(15, 15, 15, 0.8);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  z-index: 1000;
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
+}
+
+.sidebar-mini div {
+  color: #888;
+  margin: 12px 0;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.sidebar-mini div:hover {
+  color: #fff;
+  transform: translateY(-2px);
+  background: rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.sidebar-mini div.active {
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+/* ========================
+   🔥 MAIN
+======================== */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px 20px 20px;
+  min-height: 100vh;
+}
+
+.chat-active .main {
+  justify-content: space-between;
+  padding-top: 80px;
+  padding-bottom: 20px;
+}
+
+/* ========================
+   🔥 LOGO
+======================== */
+.aura-logo {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+}
+
+.aura-logo::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(236, 72, 153, 0.4);
+  margin-right: 12px;
+  animation: pulse 2s ease-in-out infinite alternate;
+}
+
+.aura-logo::after {
+  content: "AURA";
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================
+   🔥 CHAT BOX
+======================== */
+#chatBox {
+  display: none;
+}
+
+.chat-active #chatBox {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  max-width: 800px;
+  height: 60vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 10px;
+  animation: fadeIn 0.4s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
+
+/* ========================
+   💬 MESSAGES
+======================== */
+.message {
+  position: relative;
+  max-width: 75%;
+  padding: 16px 20px;
+  margin: 12px 0;
+  border-radius: 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  backdrop-filter: blur(16px);
+  animation: slideUp 0.3s ease;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* USER */
+.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  color: white;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+}
+
+/* BOT */
+.bot {
+  align-self: flex-start;
+  background: rgba(25,25,25,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e2e8f0;
+}
+
+/* ========================
+   📦 MESSAGE CONTENT
+======================== */
+.msg-content {
+  word-wrap: break-word;
+}
+
+/* ========================
+   📋 COPY BUTTON
+======================== */
+.copy-btn {
+  position: absolute;
+  right: 8px;
+  top: 6px;
+  font-size: 11px;
+  background: rgba(255,255,255,0.05);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #aaa;
+  transition: 0.2s;
+}
+
+.copy-btn:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+/* ========================
+   🔥 INPUT
+======================== */
+.input-wrapper {
+  width: 70%;
+  max-width: 800px;
+  backdrop-filter: blur(20px);
+  background: rgba(25,25,25,0.8);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  padding: 4px 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+}
+
+.input-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 16px;
+  padding: 12px 16px;
+  font-family: inherit;
+}
+
+.input-wrapper input::placeholder {
+  color: #94a3b8;
+}
+
+.input-wrapper button {
+  margin-left: 8px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  border: none;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.input-wrapper button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+}
+
+.file-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  margin-right: 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #d8b4fe;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+
+.file-upload-btn:hover {
+  background: rgba(139, 92, 246, 0.18);
+  transform: translateY(-1px);
+}
+
+.upload-preview-card {
+  width: 70%;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  border-radius: 24px;
+  background: rgba(18, 20, 36, 0.88);
+  border: 1px solid rgba(139, 92, 246, 0.18);
+  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.upload-preview-card.hidden {
+  display: none;
+}
+
+.preview-info {
+  flex: 1;
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+.preview-info strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.clear-file-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-file-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+
+.file-preview-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.file-preview-card.image {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.14), rgba(236, 72, 153, 0.08));
+}
+
+.file-preview-card.pdf {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.14), rgba(139, 92, 246, 0.08));
+}
+
+.file-preview-card strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.file-preview-card span {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.file-meta {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.file-question {
+  margin-top: 12px;
+  color: #e2e8f0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ========================
+   🔥 FEATURES
+======================== */
+.features {
+  margin-top: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.feature-btn {
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 10px 20px;
+  border-radius: 24px;
+  color: #94a3b8;
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.feature-btn:hover {
+  background: rgba(139, 92, 246, 0.1);
+  color: #fff;
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+/* ========================
+   🔥 HISTORY PANEL
+======================== */
+.history-panel {
+  position: fixed;
+  left: 48px;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  backdrop-filter: blur(20px);
+  background: rgba(15,15,15,0.9);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  padding: 80px 16px 16px 16px;
+  overflow-y: auto;
+  z-index: 999;
+  transform: translateX(-110%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+
+.history-panel.show {
+  transform: translateX(0);
+}
+
+/* ========================
+   🔥 CHAT ITEMS
+======================== */
+.chat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.chat-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+  transform: translateX(4px);
+}
+
+.chat-item.active {
+  background: rgba(139, 92, 246, 0.2);
+  border-left: 3px solid #8b5cf6;
+}
+
+.chat-item span {
+  flex: 1;
+  font-size: 14px;
+  color: #cbd5e1;
+  font-weight: 400;
+}
+
+/* ACTIONS */
+.chat-item button {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.chat-item button:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ========================
+   🔥 CODE BLOCK
+======================== */
+pre {
+  background: #0d1117;
+  padding: 12px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+code {
+  color: #58a6ff;
+}
+
+/* ========================
+   🔥 SCROLLBAR
+======================== */
+#chatBox::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chatBox::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+#chatBox::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+}
+
+#chatBox::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* ========================
+   🎬 ANIMATIONS
+======================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(236, 72, 153, 0.4);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 1), 0 0 60px rgba(236, 72, 153, 0.6);
+  }
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar-mini {
+    width: 40px;
+  }
+
+  .dashboard-header {
+    left: 40px;
+  }
+
+  .history-panel {
+    left: 40px;
+    width: 250px;
+  }
+
+  .input-wrapper,
+  .chat-active #chatBox {
+    width: 95%;
+  }
+
+  .main {
+    padding: 70px 10px 10px 10px;
+  }
+
+  .features {
+    gap: 8px;
+  }
+
+  .feature-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-header {
+    padding: 12px 16px;
+  }
+
+  #welcomeText {
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .aura-logo {
+    font-size: 24px;
+  }
+
+  .aura-logo::before {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.model-select {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 20px;
+  outline: none;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 8px;
+  transition: all 0.3s ease;
+}
+
+.model-select:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.model-select option {
+  background: #1a1a1a;
+  color: #e2e8f0;
+}
+
+.dashboard-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  left: 48px;
+  padding: 1px 20px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 900;
+  backdrop-filter: blur(20px);
+  background: rgba(15, 15, 15, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-meta {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+
+#welcomeText {
+  color: #e2e8f0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #e2e8f0;
+  cursor: pointer;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+/* =========================================
+☀️ AURA LIGHT MODE (WHITE + ORANGE)
+========================================= */
+
+body.light-mode {
+background: linear-gradient(135deg, #fff7ed 0%, #ffffff 45%, #ffedd5 100%);
+color: #1f2937;
+}
+
+body.light-mode::before {
+background:
+radial-gradient(circle at 20% 80%, rgba(251, 146, 60, 0.12) 0%, transparent 50%),
+radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.12) 0%, transparent 50%);
+}
+
+/* HEADER */
+body.light-mode .dashboard-header {
+background: rgba(255,255,255,0.75);
+border-bottom: 1px solid rgba(251, 146, 60, 0.15);
+backdrop-filter: blur(18px);
+}
+
+body.light-mode #welcomeText {
+color: #1f2937;
+}
+
+/* SIDEBAR */
+body.light-mode .sidebar-mini {
+background: rgba(255,255,255,0.7);
+border-right: 1px solid rgba(251,146,60,0.15);
+}
+
+body.light-mode .sidebar-mini div {
+color: #6b7280;
+}
+
+body.light-mode .sidebar-mini div:hover {
+background: rgba(251,146,60,0.12);
+color: #ea580c;
+box-shadow: 0 4px 12px rgba(251,146,60,0.2);
+}
+
+/* HISTORY PANEL */
+body.light-mode .history-panel {
+background: rgba(255,255,255,0.75);
+border-right: 1px solid rgba(251,146,60,0.12);
+}
+
+body.light-mode .chat-item span {
+color: #374151;
+}
+
+body.light-mode .chat-item:hover {
+background: rgba(251,146,60,0.08);
+}
+
+body.light-mode .chat-item.active {
+background: rgba(251,146,60,0.12);
+border-left: 3px solid #f97316;
+}
+
+/* LOGO */
+body.light-mode .aura-logo::before {
+background: linear-gradient(135deg, #f97316, #fb923c);
+box-shadow:
+0 0 20px rgba(249,115,22,0.5),
+0 0 40px rgba(251,146,60,0.25);
+}
+body.light-mode .aura-logo::after {
+background: linear-gradient(135deg, #111827 0%, #374151 100%);
+
+background-clip: text;
+-webkit-background-clip: text;
+
+color: transparent;
+-webkit-text-fill-color: transparent;
+}
+
+
+/* INPUT */
+body.light-mode .input-wrapper {
+background: rgba(255,255,255,0.75);
+border: 1px solid rgba(251,146,60,0.15);
+box-shadow: 0 8px 30px rgba(249,115,22,0.08);
+}
+
+body.light-mode .input-wrapper input {
+color: #111827;
+}
+
+body.light-mode .input-wrapper input::placeholder {
+color: #6b7280;
+}
+
+body.light-mode .input-wrapper:focus-within {
+border-color: rgba(249,115,22,0.35);
+box-shadow: 0 8px 30px rgba(249,115,22,0.15);
+}
+
+/* SEND BUTTON */
+body.light-mode .input-wrapper button {
+background: linear-gradient(135deg, #f97316, #fb923c);
+color: white;
+box-shadow: 0 4px 14px rgba(249,115,22,0.3);
+}
+
+body.light-mode .input-wrapper button:hover {
+box-shadow: 0 6px 20px rgba(249,115,22,0.4);
+}
+
+/* MODEL SELECT */
+body.light-mode .model-select {
+background: rgba(255,255,255,0.8);
+color: #1f2937;
+border: 1px solid rgba(251,146,60,0.2);
+}
+
+body.light-mode .model-select option {
+background: #fff;
+color: #111827;
+}
+
+/* FEATURE BUTTONS */
+body.light-mode .feature-btn {
+background: rgba(255,255,255,0.65);
+color: #374151;
+border: 1px solid rgba(251,146,60,0.15);
+}
+
+body.light-mode .feature-btn:hover {
+background: rgba(251,146,60,0.12);
+color: #ea580c;
+border-color: rgba(249,115,22,0.25);
+}
+
+/* USER MESSAGE */
+body.light-mode .user {
+background: linear-gradient(135deg, #f97316, #fb923c);
+color: white;
+}
+
+/* BOT MESSAGE */
+body.light-mode .bot {
+background: rgba(255,255,255,0.75);
+border: 1px solid rgba(251,146,60,0.12);
+color: #1f2937;
+}
+
+/* LOGOUT BUTTON */
+body.light-mode .logout-btn {
+background: rgba(255,255,255,0.8);
+color: #374151;
+border: 1px solid rgba(251,146,60,0.18);
+}
+
+body.light-mode .logout-btn:hover {
+background: rgba(239,68,68,0.08);
+color: #dc2626;
+}
+
+/* CODE BLOCKS */
+body.light-mode pre {
+background: #fff;
+border: 1px solid rgba(251,146,60,0.12);
+}
+
+body.light-mode code {
+color: #ea580c;
+}
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="app">
+  <div class="dashboard-header">
+    <div class="logo aura-logo"></div>
+    <div class="dashboard-meta">
+      <span id="welcomeText">Welcome back</span>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </div>
+
+  <div class="sidebar-mini">
+    <div id="homeBtn" title="Home">🏠</div>
+    <div id="newChatBtn" title="New Chat">➕</div>
+    <div id="historyBtn" title="History">⏳</div>
+    <div id="themeToggle" title="Toggle Theme">🌙</div>
+  </div>
+
+  <div id="history" class="history-panel"></div>
+
+  <div class="main">
+    <div class="logo aura-logo"></div>
+    <div id="chatBox"></div>
+    <div class="upload-preview-card hidden" id="uploadPreview">
+      <div class="preview-info" id="previewInfo"></div>
+      <button class="clear-file-btn" id="clearFileBtn">✕</button>
+    </div>
+    <div class="input-wrapper">
+      <button id="uploadBtn" type="button" class="file-upload-btn" title="Upload image or PDF">📎</button>
+      <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden />
+      <input id="userInput" type="text" placeholder="Message AURA..." autocomplete="off" />
+      <select id="modelSelect" class="model-select">
+        <option value="openrouter">Aura</option>
+        <option value="gemini">AuraPlus</option>
+      </select>
+      <button id="sendBtn">➤</button>
+    </div>
+    <div class="features">
+      <div class="feature-btn">Agent</div>
+      <div class="feature-btn">CLI</div>
+      <div class="feature-btn">API</div>
+      <div class="feature-btn">IDE</div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

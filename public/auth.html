@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura AI — Login / Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-backdrop"></div>
+    <div class="auth-card" aria-live="polite">
+      <div class="brand-panel">
+        <div class="logo-mark"></div>
+        <div class="brand-copy">
+          <span class="eyebrow">Aura</span>
+          <h1>One login. One voice. One Aura.</h1>
+          <p>Sign in or create your Aura account with built-in OTP verification for a seamless AI experience.</p>
+        </div>
+      </div>
+
+      <div class="auth-tabs" role="tablist" aria-label="Authentication tabs">
+        <button id="loginTab" class="tab-button active" type="button" role="tab" aria-selected="true">Login</button>
+        <button id="signupTab" class="tab-button" type="button" role="tab" aria-selected="false">Sign Up</button>
+      </div>
+
+      <div class="auth-panel active" id="loginPanel" role="tabpanel">
+        <form id="loginForm">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" name="email" type="email" autocomplete="email" placeholder="you@aura.ai" required />
+
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+
+          <button class="primary-button" type="submit">Sign In</button>
+        </form>
+      </div>
+
+      <div class="auth-panel" id="signupPanel" role="tabpanel" aria-hidden="true">
+        <form id="signupForm">
+          <label for="signupUsername">Username</label>
+          <input id="signupUsername" name="username" type="text" autocomplete="username" placeholder="Aurora" required />
+
+          <label for="signupEmail">Email</label>
+          <input id="signupEmail" name="email" type="email" autocomplete="email" placeholder="you@aura.ai" required />
+
+          <label for="signupPassword">Password</label>
+          <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="Create a password" required />
+
+          <button class="primary-button" type="submit">Create Account</button>
+        </form>
+      </div>
+
+      <div class="auth-panel" id="otpPanel" role="tabpanel" aria-hidden="true">
+        <form id="otpForm">
+          <label for="otpEmail">Email</label>
+          <input id="otpEmail" type="email" autocomplete="email" readonly />
+
+          <label for="otpCode">Enter OTP</label>
+          <input id="otpCode" name="otp" type="text" inputmode="numeric" pattern="\d{6}" autocomplete="one-time-code" placeholder="123456" required />
+
+          <button class="primary-button" type="submit">Verify Code</button>
+        </form>
+        <div class="otp-actions">
+          <button class="secondary-button" id="resendOtpBtn" type="button">Resend Code</button>
+          <button class="secondary-button" id="backToLoginBtn" type="button">Back to Login</button>
+        </div>
+        <div class="otp-hint">OTP expires in 10 minutes. Check spam if you don't see it.</div>
+      </div>
+
+      <div class="feedback" id="authFeedback" aria-live="assertive"></div>
+      <div class="dev-otp" id="devOtp" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

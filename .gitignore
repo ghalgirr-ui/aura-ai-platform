@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+yarn.lock
+
+# Environment variables (NEVER commit)
+.env
+.env.local
+.env.*.local
+
+# Uploaded files and temporary data
+uploads/
+*.tmp
+*.temp
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Build and dist folders
+dist/
+build/
+
+# Testing
+coverage/
+.nyc_output/
