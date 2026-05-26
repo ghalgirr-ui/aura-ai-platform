@@ -10,8 +10,19 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="app">
+  <!-- <video id="bgVideo" autoplay muted loop playsinline>
+  <source src="aura-bg1.mp4" type="video/mp4">
+</video> -->
   <div class="dashboard-header">
-    <div class="logo aura-logo"></div>
+    <button id="hamburgerBtn" class="hamburger-btn" title="Toggle menu" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="logo aura-logo">
+      <img src="/assets/aura-logo-64.png" alt="Aura Logo" class="aura-logo-img">
+      <span class="aura-logo-text">AURA</span>
+    </div>
     <div class="dashboard-meta">
       <span id="welcomeText">Welcome back</span>
       <button id="logoutBtn" class="logout-btn">Logout</button>
@@ -19,45 +30,170 @@
   </div>
 
   <div class="sidebar-mini">
-    <div id="homeBtn" title="Home">🏠</div>
-    <div id="newChatBtn" title="New Chat">➕</div>
-    <div id="historyBtn" title="History">⏳</div>
-    <div id="themeToggle" title="Toggle Theme">🌙</div>
+    <div id="homeBtn" title="Home"><span>🏠</span></div>
+<div id="newChatBtn" title="New Chat"><span>➕</span></div>
+<div id="historyBtn" title="History"><span>⏳</span></div>
+<div id="helpFeedbackBtn" title="Help & Feedback"><span>💬</span></div>
+<div id="themeToggle" title="Toggle Theme"><span>🌙</span></div>
   </div>
 
   <div id="history" class="history-panel"></div>
-
-  <div class="main">
-    <div class="logo aura-logo"></div>
+ 
+    <div class="main">
+       <div class="logo aura-logo">
+      <img src="/assets/aura-logo-64.png" alt="Aura Logo" class="aura-logo-img">
+      <span class="aura-logo-text">AURA</span>
+    </div>
     <div id="chatBox"></div>
     <div class="upload-preview-card hidden" id="uploadPreview">
       <div class="preview-info" id="previewInfo"></div>
       <button class="clear-file-btn" id="clearFileBtn">✕</button>
     </div>
     <div class="input-wrapper">
-      <button id="uploadBtn" type="button" class="file-upload-btn" title="Upload image or PDF">📎</button>
-      <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden />
-      <input id="userInput" type="text" placeholder="Message AURA..." autocomplete="off" />
-      <select id="modelSelect" class="model-select">
-        <option value="openrouter">Aura</option>
-        <option value="gemini">AuraPlus</option>
-      </select>
-      <button id="sendBtn">➤</button>
+  <button id="uploadBtn" type="button" class="file-upload-btn" title="Upload image or PDF">📎</button>
+
+  <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden />
+
+  <input id="userInput" type="text" placeholder="Message AURA..." autocomplete="off" />
+
+  <select id="modelSelect" class="model-select">
+    <option value="aura">Aura</option>
+    <option value="auraplus">AuraPlus</option>
+    <option value="aurafast">Aura Fast</option>
+    <option value="aurasmall">Aura Small</option>
+    <option value="auradeep">Aura Deep</option>
+    <option value="auraresearch">Aura Research</option>
+    <option value="auraclaude">Aura Claude</option>
+    <option value="auragpt">Aura GPT</option>
+  </select>
+  <!-- Hidden mode selector used by UI to track selected mode -->
+  <select id="modeSelect" class="mode-select" hidden>
+    <option value="general">General</option>
+    <option value="coding">Coding</option>
+    <option value="research">Research</option>
+    <option value="writing">Writing</option>
+    <option value="study">Study</option>
+    <option value="startup">Startup</option>
+  </select>
+
+  <button id="settingsBtn" type="button" class="settings-btn" title="Tools & Settings">
+    ⚙️
+  </button>
+
+  <button id="sendBtn">➤</button>
+</div>
+
+<div class="features">
+  <button class="feature-btn active" data-mode="general">✨ General</button>
+  <button class="feature-btn" data-mode="coding">💻 Coding</button>
+  <button class="feature-btn" data-mode="research">🔬 Research</button>
+  <button class="feature-btn" data-mode="writing">✍️ Writing</button>
+  <button class="feature-btn" data-mode="study">📚 Study</button>
+  <button class="feature-btn" data-mode="startup">🚀 Startup</button>
+</div>
+
+<div id="toolsPopup" class="tools-popup hidden">
+  <button id="voiceInputBtn" class="popup-tool-btn">🎙️ Voice Input</button>
+  <button id="webSearchToggle" class="popup-tool-btn">🌐 Web Search</button>
+</div>
+
+<!-- HELP & FEEDBACK MODAL -->
+<div id="helpFeedbackModal" class="help-feedback-modal hidden">
+  <div class="help-feedback-overlay" id="helpFeedbackOverlay"></div>
+  <div class="help-feedback-popup">
+    <div class="help-feedback-header">
+      <h2>💬 Help & Feedback</h2>
+      <button id="closeFeedbackBtn" class="close-btn">✕</button>
     </div>
-    <div class="features">
-      <div class="feature-btn">Agent</div>
-      <div class="feature-btn">CLI</div>
-      <div class="feature-btn">API</div>
-      <div class="feature-btn">IDE</div>
+
+    <div class="help-feedback-tabs">
+      <button class="tab-btn active" data-tab="feedback">Feedback</button>
+      <button class="tab-btn" data-tab="help">Help</button>
     </div>
-  </div>
+
+    <!-- FEEDBACK TAB -->
+    <div id="feedbackTab" class="tab-content active">
+      <form id="feedbackForm" class="feedback-form">
+        <div class="form-group">
+          <label>Rate Your Experience</label>
+          <div class="rating-selector">
+            <button type="button" class="star-btn" data-rating="1">⭐</button>
+            <button type="button" class="star-btn" data-rating="2">⭐</button>
+            <button type="button" class="star-btn" data-rating="3">⭐</button>
+            <button type="button" class="star-btn" data-rating="4">⭐</button>
+            <button type="button" class="star-btn" data-rating="5">⭐</button>
+          </div>
+          <input type="hidden" id="feedbackRating" name="rating" value="">
+        </div>
+
+        <div class="form-group">
+          <label>Your Feedback</label>
+          <textarea id="feedbackMessage" name="message" placeholder="Tell us about your experience..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Screenshot (Optional)</label>
+          <div class="file-upload-area" id="feedbackUploadArea">
+            <input type="file" id="feedbackScreenshot" name="screenshot" accept=".png,.jpg,.jpeg,.webp" hidden>
+            <span>📸 Click to upload or drag & drop</span>
+            <small>PNG, JPG, JPEG, WEBP • Max 5MB</small>
+          </div>
+          <div id="feedbackFileName" class="file-name hidden"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Send Feedback</button>
+      </form>
+    </div>
+
+    <!-- HELP TAB -->
+    <div id="helpTab" class="tab-content hidden">
+      <form id="helpForm" class="help-form">
+        <div class="form-group">
+          <label>Issue Category</label>
+          <select id="helpCategory" name="category" required>
+            <option value="">Select a category...</option>
+            <option value="login">Login problem</option>
+            <option value="payment">Payment issue</option>
+            <option value="ai-response">AI wrong response</option>
+            <option value="upload">Upload issue</option>
+            <option value="voice">Voice issue</option>
+            <option value="bug">Bug report</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Describe Your Issue</label>
+          <textarea id="helpMessage" name="message" placeholder="Describe your issue..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Screenshot (Optional)</label>
+          <div class="file-upload-area" id="helpUploadArea">
+            <input type="file" id="helpScreenshot" name="screenshot" accept=".png,.jpg,.jpeg,.webp" hidden>
+            <span>📸 Click to upload or drag & drop</span>
+            <small>PNG, JPG, JPEG, WEBP • Max 5MB</small>
+          </div>
+          <div id="helpFileName" class="file-name hidden"></div>
+        </div>
+
+        <button type="submit" class="submit-btn">Request Help</button>
+      </form>
+    </div>
+  </div></div>
 
   <script src="js/utils.js"></script>
+  <script src="js/ui-state.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/upload.js"></script>
   <script src="js/history.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/chat.js"></script>
+  <script src="js/mode.js"></script>
+  <script src="js/admin-trigger.js"></script>
+  <script src="js/voice.js"></script>
   <script src="js/theme.js"></script>
+  <script src="js/help-feedback.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>

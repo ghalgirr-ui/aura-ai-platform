@@ -19,14 +19,10 @@
 html, body {
   margin: 0;
   min-height: 100%;
-  background: radial-gradient(circle at 20% 20%, rgba(167, 139, 250, 0.14), transparent 25%),
-              radial-gradient(circle at 80% 15%, rgba(236, 72, 153, 0.12), transparent 18%),
-              radial-gradient(circle at 50% 90%, rgba(59, 130, 246, 0.08), transparent 28%),
-              linear-gradient(180deg, #03030a 0%, #090919 100%);
   font-family: inherit;
   color: var(--text);
+  background: transparent;
 }
-
 body::before {
   content: '';
   position: fixed;
@@ -34,7 +30,71 @@ body::before {
   background: radial-gradient(circle at 50% 0%, rgba(195, 103, 255, 0.18), transparent 20%),
               radial-gradient(circle at 10% 40%, rgba(99, 102, 241, 0.14), transparent 12%);
   pointer-events: none;
+  z-index: -3;
+}
+/* FULLSCREEN VIDEO BACKGROUND */
+#authBgVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  pointer-events: none;
+  animation: subtlePulse 12s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+  0% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+}
+/* DARK GLASS OVERLAY */
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(
+      rgba(10, 10, 20, 0.65),
+      rgba(5, 5, 15, 0.8)
+    );
+  backdrop-filter: blur(4px);
   z-index: -1;
+  pointer-events: none;
+}
+
+/* KEEP LOGIN CARD ABOVE VIDEO */
+.auth-container {
+  position: relative;
+  z-index: 10;
+}
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+  #authBgVideo {
+    object-position: center;
+  }
+
+  .auth-overlay {
+    background:
+      linear-gradient(
+        rgba(10, 10, 20, 0.75),
+        rgba(5, 5, 15, 0.88)
+      );
+  }
 }
 
 button, input {
@@ -87,12 +147,12 @@ button, input {
   margin-bottom: 28px;
 }
 
-.logo-mark {
-  width: 54px;
-  height: 54px;
+.logo-mark .aura-logo-img {
+  width: 84px;
+  height: 84px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
-  box-shadow: 0 0 24px rgba(139, 92, 246, 0.35);
+  /* background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); */
+  /* box-shadow: 0 0 24px rgba(139, 92, 246, 0.35); */
 }
 
 .brand-copy .eyebrow {
@@ -227,13 +287,423 @@ input:focus {
   color: rgba(148, 163, 184, 0.95);
 }
 
-@media (max-width: 540px) {
+/* ========================
+   � PAYMENT NOTICE
+======================== */
+.payment-notice {
+  padding: 14px 16px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.payment-notice p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.4;
+}
+
+/* ========================
+   �📱 RESPONSIVE BREAKPOINTS
+======================== */
+
+/* LARGE DESKTOP: 1200px+ */
+@media (min-width: 1200px) {
   .auth-card {
+    width: min(100%, 600px);
+  }
+}
+
+/* TABLET & DESKTOP: 992px - 1199px */
+@media (max-width: 1199px) and (min-width: 993px) {
+  .auth-card {
+    width: min(100%, 560px);
+  }
+}
+
+/* TABLET: 768px - 992px */
+@media (max-width: 992px) {
+  .auth-card {
+    width: min(100%, 520px);
+    padding: 28px;
+  }
+
+  .brand-panel {
+    margin-bottom: 24px;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(1.8rem, 2.5vw, 2.2rem);
+  }
+
+  .auth-panel form {
+    gap: 14px;
+  }
+
+  input {
+    padding: 14px 16px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 14px;
+  }
+}
+
+/* MOBILE LARGE: 576px - 767px */
+@media (max-width: 767px) {
+  .auth-shell {
+    padding: 16px;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 480px;
     padding: 24px;
+    border-radius: 24px;
   }
 
   .brand-panel {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .logo-mark {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    margin: 0 auto;
+  }
+
+  .brand-copy {
+    text-align: center;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(1.6rem, 2.2vw, 1.8rem);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .brand-copy p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .auth-tabs {
+    margin-bottom: 20px;
+  }
+
+  .tab-button {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+
+  .auth-panel form {
+    gap: 13px;
+  }
+
+  label {
+    font-size: 0.88rem;
+  }
+
+  input {
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    min-height: 44px; /* Touch target */
+  }
+
+  .otp-actions {
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .secondary-button {
+    padding: 12px 16px;
+  }
+
+  .feedback,
+  .dev-otp,
+  .otp-hint {
+    margin-top: 16px;
+    font-size: 0.9rem;
   }
 }
+
+/* MOBILE SMALL: 400px - 575px */
+@media (max-width: 575px) {
+  .auth-shell {
+    padding: 12px;
+    min-height: 100dvh;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    border-radius: 20px;
+    gap: 0;
+  }
+
+  .brand-panel {
+    margin-bottom: 18px;
+  }
+
+  .logo-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+
+  .brand-copy .eyebrow {
+    font-size: 0.78rem;
+    margin-bottom: 8px;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(1.4rem, 2vw, 1.6rem);
+    line-height: 1.05;
+    margin-bottom: 6px;
+  }
+
+  .brand-copy p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .auth-tabs {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tab-button {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    min-height: 40px;
+  }
+
+  .auth-panel form {
+    gap: 12px;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+
+  input {
+    padding: 13px 14px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 13px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    min-height: 44px;
+  }
+
+  .otp-hint {
+    font-size: 0.85rem;
+  }
+}
+
+/* EXTRA SMALL: < 400px */
+@media (max-width: 399px) {
+  .auth-shell {
+    padding: 8px;
+  }
+
+  .auth-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+  }
+
+  .brand-copy h1 {
+    font-size: clamp(1.3rem, 1.8vw, 1.5rem);
+    margin-bottom: 4px;
+  }
+
+  .brand-copy p {
+    font-size: 0.8rem;
+  }
+
+  .auth-tabs {
+    gap: 6px;
+  }
+
+  .tab-button {
+    padding: 9px 12px;
+    font-size: 0.85rem;
+  }
+
+  .auth-panel form {
+    gap: 11px;
+  }
+
+  input {
+    padding: 12px 12px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    padding: 12px 12px;
+  }
+}
+
+/* ========================
+   RESPONSIVE STABILITY LAYER
+   Layout-only fixes. Preserve existing Aura auth visuals above.
+======================== */
+html {
+  min-width: 0;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.auth-shell {
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.auth-card,
+.brand-panel,
+.brand-copy,
+.auth-panel,
+.auth-panel form,
+.otp-actions,
+.feedback,
+.dev-otp,
+.otp-hint {
+  min-width: 0;
+}
+
+.brand-copy h1,
+.brand-copy p,
+.feedback,
+.dev-otp,
+.otp-hint,
+label,
+input,
+button {
+  overflow-wrap: anywhere;
+}
+
+input,
+button {
+  max-width: 100%;
+}
+
+@supports (min-height: 100svh) {
+  body,
+  .auth-shell {
+    min-height: 100svh;
+  }
+}
+
+@media (max-width: 767px) {
+  .auth-shell {
+    align-items: start;
+    place-items: start center;
+    overflow-y: auto;
+  }
+
+  .auth-card {
+    margin-block: auto;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-shell {
+    padding: 6px;
+  }
+
+  .auth-card {
+    padding: 14px;
+  }
+
+  .brand-panel {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .brand-copy .eyebrow {
+    letter-spacing: 0.16em;
+  }
+
+  .auth-tabs {
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .tab-button {
+    padding-inline: 8px;
+  }
+}
+
+@media (max-height: 640px) and (max-width: 767px) {
+  .auth-shell {
+    place-items: start center;
+  }
+
+  .auth-card {
+    margin-block: 0;
+  }
+
+  .brand-panel {
+    margin-bottom: 14px;
+  }
+
+  .brand-copy p {
+    line-height: 1.4;
+  }
+
+  .auth-tabs {
+    margin-bottom: 12px;
+  }
+
+  .feedback,
+  .dev-otp,
+  .otp-hint {
+    margin-top: 12px;
+  }
+}
+
+/* Aura logo helper */
+.auth-logo-img{width:72px;height:72px;object-fit:contain;border-radius:18px;filter:drop-shadow(0 0 20px rgba(168,85,247,0.5)) drop-shadow(0 0 28px rgba(59,130,246,0.35));}

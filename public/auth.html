@@ -10,11 +10,16 @@
   <link rel="stylesheet" href="auth.css" />
 </head>
 <body>
+  <video id="authBgVideo" autoplay muted loop playsinline>
+  <source src="aura-bg2.mp4" type="video/mp4" />
+</video>
   <div class="auth-shell">
     <div class="auth-backdrop"></div>
     <div class="auth-card" aria-live="polite">
       <div class="brand-panel">
-        <div class="logo-mark"></div>
+        <div class="logo-mark">
+          <img src="/assets/aura-logo-64.png" alt="Aura Logo" class="aura-logo-img">
+        </div>
         <div class="brand-copy">
           <span class="eyebrow">Aura</span>
           <h1>One login. One voice. One Aura.</h1>
@@ -36,10 +41,14 @@
           <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
 
           <button class="primary-button" type="submit">Sign In</button>
+          <p class="login-note">One-time activation payment required only for new account creation.</p>
         </form>
       </div>
 
       <div class="auth-panel" id="signupPanel" role="tabpanel" aria-hidden="true">
+        <div class="payment-notice">
+          <p>💳 <strong>₹2 one-time payment required</strong> to create your account</p>
+        </div>
         <form id="signupForm">
           <label for="signupUsername">Username</label>
           <input id="signupUsername" name="username" type="text" autocomplete="username" placeholder="Aurora" required />
@@ -50,7 +59,8 @@
           <label for="signupPassword">Password</label>
           <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="Create a password" required />
 
-          <button class="primary-button" type="submit">Create Account</button>
+          <button class="primary-button" type="submit">Create Account (₹2)</button>
+          <button id="devTestPayBtn" class="secondary-button" type="button" style="display:none; margin-top:8px;">Dev Test Payment</button>
         </form>
       </div>
 
@@ -76,6 +86,8 @@
     </div>
   </div>
 
+  <!-- Razorpay Payment Gateway -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="js/auth.js"></script>
 </body>
 </html>

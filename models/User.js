@@ -22,6 +22,17 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
 
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+
+  isPaid: {
+    type: Boolean,
+    default: false,
+  },
+
   otp: {
     type: String,
   },
