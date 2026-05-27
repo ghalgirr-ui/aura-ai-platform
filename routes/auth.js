@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { body } = require("express-validator");
 const Razorpay = require("razorpay");
-// const transporter = require("../config/mail");
-const { Resend } = require("resend");
+const transporter = require("../config/mail");
+// const { Resend } = require("resend");
 const User = require("../models/User");
 const PaymentEvent = require("../models/PaymentEvent");
 const { authLimiter, paymentLimiter } = require("../middleware/rateLimiter");
@@ -50,16 +50,22 @@ const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
 // const { Resend } = require("resend");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOtpEmail = async (email, otp) => {
-  if (!process.env.RESEND_API_KEY) {
-    logger.warn({ email }, "RESEND_API_KEY missing");
+  const emailConfigured =
+    process.env.EMAIL_USER &&
+    process.env.EMAIL_PASS &&
+    process.env.EMAIL_USER !== "yourgmail@gmail.com" &&
+    process.env.EMAIL_PASS !== "your_app_password";
+
+  if (!emailConfigured) {
+    logger.warn({ email, otp }, "Email is not configured; OTP shown for development");
     return;
   }
 
-  const result = await resend.emails.send({
-    from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+  await transporter.sendMail({
+    from: `"Aura" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Aura OTP Verification",
     html: `
@@ -68,8 +74,6 @@ const sendOtpEmail = async (email, otp) => {
       <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
     `,
   });
-
-  logger.info({ result }, "Resend email response");
 };
 router.get("/", (req, res) => {
   res.send("Auth Route Working");
