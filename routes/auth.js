@@ -52,7 +52,7 @@ const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-cconst sendOtpEmail = async (email, otp) => {
+const sendOtpEmail = async (email, otp) => {
   if (!process.env.RESEND_API_KEY) {
     logger.warn({ email }, "RESEND_API_KEY missing");
     return;
