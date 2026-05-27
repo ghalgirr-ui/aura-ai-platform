@@ -48,7 +48,7 @@ const publicUser = (user) => ({
 
 const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
-const { Resend } = require("resend");
+// const { Resend } = require("resend");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
