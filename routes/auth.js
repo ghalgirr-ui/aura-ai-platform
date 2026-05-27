@@ -52,13 +52,13 @@ const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendOtpEmail = async (email, otp) => {
+cconst sendOtpEmail = async (email, otp) => {
   if (!process.env.RESEND_API_KEY) {
     logger.warn({ email }, "RESEND_API_KEY missing");
     return;
   }
 
-  await resend.emails.send({
+  const result = await resend.emails.send({
     from: process.env.EMAIL_FROM || "onboarding@resend.dev",
     to: email,
     subject: "Aura OTP Verification",
@@ -68,8 +68,9 @@ const sendOtpEmail = async (email, otp) => {
       <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
     `,
   });
-};
 
+  logger.info({ result }, "Resend email response");
+};
 router.get("/", (req, res) => {
   res.send("Auth Route Working");
 });
