@@ -414,19 +414,24 @@ await PaymentEvent.updateOne(
   }
 );
 
+let emailFailed = false;
+
 try {
   await sendOtpEmail(email, otp);
 } catch (err) {
+  emailFailed = true;
   logger.error({ err }, "OTP email failed, but payment/user creation succeeded");
 }
 
-      return res.status(201).json({
-        success: true,
-        message: "Payment successful! Account created. Check your email for the OTP code.",
-        email: user.email,
-        userId: user._id.toString(),
-        devOtp: process.env.NODE_ENV === "production" ? undefined : otp,
-      });
+    return res.status(201).json({
+  success: true,
+  message: emailFailed
+    ? "Payment successful! Email delivery failed. Use OTP shown below."
+    : "Payment successful! Check your email for OTP.",
+  email: user.email,
+  userId: user._id.toString(),
+  devOtp: otp,
+});
     } catch (error) {
       logger.error({ err: error }, "Payment verification error");
       return res.status(500).json({ error: error.message || "Payment verification failed." });
