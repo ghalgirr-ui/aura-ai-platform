@@ -402,17 +402,23 @@ router.post(
       }
 
       await user.save();
-      await PaymentEvent.updateOne(
-        { orderId: razorpay_order_id },
-        {
-          status: "paid",
-          userId: user._id,
-          paymentId: razorpay_payment_id,
-          verifiedAt: new Date(),
-          raw: { payment },
-        }
-      );
-      await sendOtpEmail(email, otp);
+
+await PaymentEvent.updateOne(
+  { orderId: razorpay_order_id },
+  {
+    status: "paid",
+    userId: user._id,
+    paymentId: razorpay_payment_id,
+    verifiedAt: new Date(),
+    raw: { payment },
+  }
+);
+
+try {
+  await sendOtpEmail(email, otp);
+} catch (err) {
+  logger.error({ err }, "OTP email failed, but payment/user creation succeeded");
+}
 
       return res.status(201).json({
         success: true,
