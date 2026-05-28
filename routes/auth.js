@@ -54,26 +54,17 @@ const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 // const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOtpEmail = async (email, otp) => {
-  const emailConfigured =
-    process.env.EMAIL_USER &&
-    process.env.EMAIL_PASS &&
-    process.env.EMAIL_USER !== "yourgmail@gmail.com" &&
-    process.env.EMAIL_PASS !== "your_app_password";
-
-  if (!emailConfigured) {
-    logger.warn({ email, otp }, "Email is not configured; OTP shown for development");
-    return;
-  }
-
   await sendEmail(
-  email,
-  "Aura OTP Verification",
-  `
-    <h2>Aura Account Verification</h2>
-    <p>Your verification code is: <strong>${otp}</strong></p>
-    <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
-  `
-);
+    email,
+    "Aura OTP Verification",
+    `
+      <h2>Aura Account Verification</h2>
+      <p>Your verification code is: <strong>${otp}</strong></p>
+      <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
+    `
+  );
+
+  logger.info({ email }, "OTP email sent successfully");
 };
 router.get("/", (req, res) => {
   res.send("Auth Route Working");
