@@ -11,8 +11,7 @@ window.Aura.setVoiceState = (state, label) => {
   voiceBtn.classList.toggle("active", state === "listening");
   voiceBtn.classList.toggle("listening", state === "listening");
   voiceBtn.setAttribute("aria-pressed", state === "listening" ? "true" : "false");
-  voiceBtn.textContent = label || (state === "listening" ? "Stop Voice" : "Voice Input");
-};
+  voiceBtn.innerHTML = "";};
 
 window.Aura.isVoiceInputSupported = () => {
   return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -61,13 +60,12 @@ window.Aura.startVoiceRecognition = async () => {
     clearTimeout(window.Aura.state.voiceTimeout);
     window.Aura.state.voiceRecognitionActive = false;
     window.Aura.state.speechRecognition = null;
-    window.Aura.setVoiceState("idle", "Voice Input");
-  };
+    window.Aura.setVoiceState("idle");  };
 
   recognition.onstart = () => {
     window.Aura.state.voiceRecognitionActive = true;
     window.Aura.state.speechRecognition = recognition;
-    window.Aura.setVoiceState("listening", "Stop Voice");
+    window.Aura.setVoiceState("listening");
     window.Aura.voiceMessage("Listening. Voice input is beta and may vary by browser.");
     window.Aura.state.voiceTimeout = window.setTimeout(() => {
       if (window.Aura.state.voiceRecognitionActive) recognition.stop();
@@ -129,7 +127,7 @@ window.Aura.initVoice = () => {
   const voiceBtn = document.getElementById("voiceInputBtn");
   if (!voiceBtn) return;
   voiceBtn.setAttribute("aria-pressed", "false");
-  voiceBtn.textContent = "Voice Input";
+  voiceBtn.innerHTML = "";
   if (!window.Aura.isVoiceInputSupported()) {
     voiceBtn.classList.add("unsupported");
     voiceBtn.title = "Voice input is not supported in this browser.";

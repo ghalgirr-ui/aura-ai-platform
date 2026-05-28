@@ -158,7 +158,7 @@ button, input {
 
 .brand-copy .eyebrow {
   display: inline-flex;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: var(--accent);
   font-size: 0.85rem;
   letter-spacing: 0.2em;
@@ -287,7 +287,136 @@ input:focus {
 .dev-otp {
   color: rgba(148, 163, 184, 0.95);
 }
+/* =========================
+   MOBILE RESPONSIVE FIXES
+========================= */
 
+@media (max-width: 768px) {
+
+  .auth-shell {
+    padding: 14px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .auth-card {
+    width: 100%;
+    padding: 22px;
+    border-radius: 26px;
+  }
+
+  .brand-panel {
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .logo-mark .aura-logo-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+
+  .brand-copy .eyebrow {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+    letter-spacing: 0.14em;
+  }
+
+  .brand-copy h1 {
+    font-size: 2rem;
+    line-height: 1.05;
+    margin-bottom: 8px;
+  }
+
+  .brand-copy p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .auth-tabs {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .tab-button {
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+  }
+
+  input {
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+  }
+
+  .primary-button {
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 14px;
+  }
+
+  .secondary-button {
+    padding: 13px;
+    font-size: 0.95rem;
+  }
+
+  .feedback,
+  .dev-otp,
+  .otp-hint {
+    margin-top: 12px;
+    font-size: 0.88rem;
+  }
+
+  /* Prevent oversized vertical spacing */
+
+  .auth-panel form {
+    gap: 13px;
+  }
+
+  /* Better mobile card sizing */
+
+  .auth-card::before {
+    filter: blur(10px);
+  }
+}
+
+
+/* EXTRA SMALL DEVICES */
+
+@media (max-width: 480px) {
+
+  .auth-shell {
+    padding: 10px;
+    padding-top: 24px;
+  }
+
+  .auth-card {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .brand-copy h1 {
+    font-size: 1.75rem;
+  }
+
+  .brand-copy p {
+    font-size: 0.88rem;
+  }
+
+  .logo-mark .aura-logo-img {
+    width: 46px;
+    height: 46px;
+  }
+
+  input {
+    padding: 13px 14px;
+  }
+
+  .primary-button {
+    padding: 14px;
+  }
+}
 /* ========================
    � PAYMENT NOTICE
 ======================== */

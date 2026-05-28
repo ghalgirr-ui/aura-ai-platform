@@ -66,20 +66,8 @@
     <option value="auraclaude">Aura Claude</option>
     <option value="auragpt">Aura GPT</option>
   </select>
-  <!-- Hidden mode selector used by UI to track selected mode -->
-  <select id="modeSelect" class="mode-select" hidden>
-    <option value="general">General</option>
-    <option value="coding">Coding</option>
-    <option value="research">Research</option>
-    <option value="writing">Writing</option>
-    <option value="study">Study</option>
-    <option value="startup">Startup</option>
-  </select>
 
-  <button id="settingsBtn" type="button" class="settings-btn" title="Tools & Settings">
-    ⚙️
-  </button>
-
+<button id="voiceInputBtn" class="voice-input-btn"></button>
   <button id="sendBtn">➤</button>
 </div>
 
@@ -90,12 +78,12 @@
   <button class="feature-btn" data-mode="writing">✍️ Writing</button>
   <button class="feature-btn" data-mode="study">📚 Study</button>
   <button class="feature-btn" data-mode="startup">🚀 Startup</button>
+
+  <button id="webSearchToggle" class="feature-btn web-search-btn">
+    🌐 Web Search
+  </button>
 </div>
 
-<div id="toolsPopup" class="tools-popup hidden">
-  <button id="voiceInputBtn" class="popup-tool-btn">🎙️ Voice Input</button>
-  <button id="webSearchToggle" class="popup-tool-btn">🌐 Web Search</button>
-</div>
 
 <!-- HELP & FEEDBACK MODAL -->
 <div id="helpFeedbackModal" class="help-feedback-modal hidden">
