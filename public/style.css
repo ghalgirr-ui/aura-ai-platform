@@ -1255,7 +1255,7 @@ code {
     align-items: center;
     font-size: 18px;
     min-width: 0;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
   }
 
   .dashboard-header .logo::before {
@@ -1374,7 +1374,7 @@ code {
 
   .message {
     max-width: 85%;
-    padding: 12px 14px;
+    padding: 2px 14px;
     font-size: 14px;
     margin: 10px 0;
     border-radius: 16px;
@@ -1505,6 +1505,7 @@ code {
   display: flex;
   width: 100%;
   margin-top: 10px;
+  margin-bottom: 30px;
   padding: 0 4px;
   gap: 8px;
   overflow-x: auto;
