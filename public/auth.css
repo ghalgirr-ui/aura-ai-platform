@@ -148,9 +148,10 @@ button, input {
 }
 
 .logo-mark .aura-logo-img {
-  width: 84px;
-  height: 84px;
+  width: 64px;
+  height: 64px;
   border-radius: 18px;
+
   /* background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); */
   /* box-shadow: 0 0 24px rgba(139, 92, 246, 0.35); */
 }
