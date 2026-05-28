@@ -425,8 +425,7 @@ try {
     : "Payment successful! Check your email for OTP.",
   email: user.email,
   userId: user._id.toString(),
-  devOtp: otp,
-});
+devOtp: process.env.NODE_ENV === "development" ? otp : undefined,});
     } catch (error) {
       logger.error({ err: error }, "Payment verification error");
       return res.status(500).json({ error: error.message || "Payment verification failed." });
