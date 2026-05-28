@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { body } = require("express-validator");
 const Razorpay = require("razorpay");
-const transporter = require("../config/mail");
+// const transporter = require("../config/mail");
+const sendEmail = require("../config/mail");
 // const { Resend } = require("resend");
 const User = require("../models/User");
 const PaymentEvent = require("../models/PaymentEvent");
@@ -64,16 +65,15 @@ const sendOtpEmail = async (email, otp) => {
     return;
   }
 
-  await transporter.sendMail({
-    from: `"Aura" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: "Aura OTP Verification",
-    html: `
-      <h2>Aura Account Verification</h2>
-      <p>Your verification code is: <strong>${otp}</strong></p>
-      <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
-    `,
-  });
+  await sendEmail(
+  email,
+  "Aura OTP Verification",
+  `
+    <h2>Aura Account Verification</h2>
+    <p>Your verification code is: <strong>${otp}</strong></p>
+    <p>This code expires in ${OTP_EXPIRY_MINUTES} minutes.</p>
+  `
+);
 };
 router.get("/", (req, res) => {
   res.send("Auth Route Working");

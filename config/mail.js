@@ -1,13 +1,22 @@
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const defaultClient = SibApiV3Sdk.ApiClient.instance;
 
-module.exports = transporter;
+const apiKey = defaultClient.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+
+const sendEmail = async (to, subject, htmlContent) => {
+  return apiInstance.sendTransacEmail({
+    sender: {
+      name: "Aura",
+      email: "ghalgirr@gmail.com",
+    },
+    to: [{ email: to }],
+    subject,
+    htmlContent,
+  });
+};
+
+module.exports = sendEmail;
