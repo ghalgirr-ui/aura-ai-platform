@@ -8,51 +8,85 @@ window.Aura.fetchUserFallback = async () => {
     const response = await fetch("/api/auth/me", {
       headers: window.Aura.getAuthHeaders(),
     });
+
     if (!response.ok) return null;
+
     const data = await response.json();
+
     if (data.user) {
-      window.Aura.setSession({ token, user: data.user });
+      window.Aura.setSession({
+        token,
+        user: data.user,
+      });
+
       return data.user;
     }
-  } catch {
-    return null;
+  } catch (error) {
+    console.error("Admin user lookup failed:", error);
   }
+
   return null;
 };
 
 window.Aura.initAdminTrigger = async () => {
   let localUser = window.Aura.getUser();
+
   if (!localUser && window.Aura.getToken()) {
     localUser = await window.Aura.fetchUserFallback();
   }
 
-  const isAdminUser = localUser?.role === "admin" || window.Aura.isAdmin?.();
+  const isAdminUser =
+    localUser?.role === "admin" ||
+    window.Aura.isAdmin?.();
+
+  if (!isAdminUser) return;
+
   let auraLogoTapCount = 0;
   let auraLogoTapTimer = null;
 
   const resetAuraLogoTap = () => {
     auraLogoTapCount = 0;
-    auraLogoTapTimer = null;
+
+    if (auraLogoTapTimer) {
+      clearTimeout(auraLogoTapTimer);
+      auraLogoTapTimer = null;
+    }
   };
 
   const openAdmin = () => {
     window.location.href = "/aura-control-center";
   };
 
-  document.querySelector(".dashboard-header .aura-logo")?.addEventListener("click", () => {
-    if (!isAdminUser) return;
-    auraLogoTapCount += 1;
-    clearTimeout(auraLogoTapTimer);
-    auraLogoTapTimer = window.setTimeout(resetAuraLogoTap, 2000);
-    if (auraLogoTapCount >= 5) {
-      resetAuraLogoTap();
-      openAdmin();
-    }
-  });
+  const logoImage = document.querySelector(
+    "#modelMenuBtn .aura-logo-img"
+  );
+
+  if (logoImage) {
+    logoImage.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      auraLogoTapCount++;
+
+      clearTimeout(auraLogoTapTimer);
+
+      auraLogoTapTimer = window.setTimeout(
+        resetAuraLogoTap,
+        2000
+      );
+
+      if (auraLogoTapCount >= 5) {
+        resetAuraLogoTap();
+        openAdmin();
+      }
+    });
+  }
 
   window.addEventListener("keydown", (event) => {
-    if (!isAdminUser) return;
-    if (event.ctrlKey && event.altKey && event.code === "KeyA") {
+    if (
+      event.ctrlKey &&
+      event.altKey &&
+      event.code === "KeyA"
+    ) {
       event.preventDefault();
       openAdmin();
     }

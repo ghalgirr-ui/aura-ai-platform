@@ -85,6 +85,51 @@ window.addEventListener("DOMContentLoaded", async () => {
       window.Aura.state.historyVisible = false;
     }
   });
+const userInput = document.getElementById("userInput");
+
+userInput.addEventListener("input", () => {
+  userInput.style.height = "24px";
+
+  userInput.style.height =
+    Math.min(userInput.scrollHeight, 180) + "px";
+
+  if (userInput.scrollHeight > 180) {
+    userInput.style.overflowY = "auto";
+  } else {
+    userInput.style.overflowY = "hidden";
+  }
+});
+
+userInput?.addEventListener("keydown", (event) => {
+
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    window.Aura.sendMessage();
+  }
+
+});
+const modelBtn = document.getElementById("modelMenuBtn");
+const modelMenu = document.getElementById("modelMenu");
+
+modelBtn.addEventListener("click", () => {
+  modelMenu.classList.toggle("show");
+});
+
+document.querySelectorAll("#modelMenu div")
+.forEach(item => {
+
+  item.addEventListener("click", () => {
+
+    currentModel = item.dataset.model;
+
+    document.getElementById(
+      "currentModelLabel"
+    ).textContent = item.textContent;
+
+    modelMenu.classList.remove("show");
+  });
+
+});
 
   window.Aura.initializeTheme();
   window.Aura.loadChats();

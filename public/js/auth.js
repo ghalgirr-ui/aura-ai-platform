@@ -37,8 +37,8 @@ const setFeedback = (message = "", type = "") => {
   if (type) authFeedback.classList.add(type);
 };
 
-const updateDevOtp = (code) => {
-  devOtp.textContent = code ? `Dev OTP: ${code}` : "";
+const updateDevOtp = () => {
+  devOtp.textContent = "";
 };
 
 const getPendingAuth = () => {
@@ -353,13 +353,13 @@ backToLoginBtn.addEventListener("click", () => {
 });
 
 // Dev test payment button (local only)
-const devTestBtn = document.getElementById("devTestPayBtn");
-if (devTestBtn) {
-  const hostname = window.location.hostname || "";
-  const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname.endsWith(".local");
-  if (isLocalhost) {
-    devTestBtn.style.display = "block";
-  }
+// const devTestBtn = document.getElementById("devTestPayBtn");
+// if (devTestBtn) {
+//   const hostname = window.location.hostname || "";
+//   const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname.endsWith(".local");
+//   if (isLocalhost) {
+//     devTestBtn.style.display = "block";
+//   }
 
   devTestBtn.addEventListener("click", async () => {
     const username = document.getElementById("signupUsername").value.trim();
@@ -375,11 +375,11 @@ if (devTestBtn) {
       devTestBtn.disabled = true;
       setFeedback("Simulating dev payment...", "info");
 
-      const resp = await fetch("/api/auth/dev-payment-success", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
-      });
+      // const resp = await fetch("/api/auth/dev-payment-success", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ username, email, password }),
+      // });
 
       const json = await resp.json();
       devTestBtn.disabled = false;
@@ -399,4 +399,3 @@ if (devTestBtn) {
       setFeedback("Dev payment request failed.", "error");
     }
   });
-}

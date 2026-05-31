@@ -19,10 +19,32 @@
       <span></span>
       <span></span>
     </button>
-    <div class="logo aura-logo">
-      <img src="/assets/aura-logo-64.png" alt="Aura Logo" class="aura-logo-img">
-      <span class="aura-logo-text">AURA</span>
-    </div>
+
+  <div class="model-dropdown-wrapper">
+  <button id="modelMenuBtn" class="model-menu-btn">
+
+    <img src="/assets/aura-logo-64.png" alt="Aura Logo" class="aura-logo-img">
+
+    <span id="currentModelLabel" class="aura-logo-text">Aura</span>
+
+    <span class="dropdown-arrow" style="margin-bottom: 10px;">⌄</span>
+
+  </button>
+
+  <div id="modelMenu" class="model-menu hidden">
+
+    <div data-model="aura">Aura</div>
+    <div data-model="auraplus">Aura Plus</div>
+    <div data-model="aurafast">Aura Fast</div>
+    <div data-model="aurasmall">Aura Small</div>
+    <div data-model="auradeep">Aura Deep</div>
+    <div data-model="auraresearch">Aura Research</div>
+    <div data-model="auraclaude">Aura Claude</div>
+    <div data-model="auragpt">Aura GPT</div>
+
+  </div>
+
+</div>
     <div class="dashboard-meta">
       <span id="welcomeText">Welcome back</span>
       <button id="logoutBtn" class="logout-btn">Logout</button>
@@ -49,23 +71,17 @@
       <div class="preview-info" id="previewInfo"></div>
       <button class="clear-file-btn" id="clearFileBtn">✕</button>
     </div>
+    <div class="input-area">
     <div class="input-wrapper">
   <button id="uploadBtn" type="button" class="file-upload-btn" title="Upload image or PDF">📎</button>
 
   <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.webp,.pdf" hidden />
 
-  <input id="userInput" type="text" placeholder="Message AURA..." autocomplete="off" />
-
-  <select id="modelSelect" class="model-select">
-    <option value="aura">Aura</option>
-    <option value="auraplus">AuraPlus</option>
-    <option value="aurafast">Aura Fast</option>
-    <option value="aurasmall">Aura Small</option>
-    <option value="auradeep">Aura Deep</option>
-    <option value="auraresearch">Aura Research</option>
-    <option value="auraclaude">Aura Claude</option>
-    <option value="auragpt">Aura GPT</option>
-  </select>
+ <textarea
+  id="userInput"
+  placeholder="Message AURA..."
+  rows="1"
+></textarea>
 
 <button id="voiceInputBtn" class="voice-input-btn"></button>
   <button id="sendBtn">➤</button>
@@ -83,7 +99,7 @@
     🌐 Web Search
   </button>
 </div>
-
+</div>
 
 <!-- HELP & FEEDBACK MODAL -->
 <div id="helpFeedbackModal" class="help-feedback-modal hidden">
