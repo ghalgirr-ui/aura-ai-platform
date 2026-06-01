@@ -17,29 +17,14 @@ const adminRoutes = require("./routes/admin");
 const analyticsRoutes = require("./routes/analytics");
 const logger = require("./utils/logger");
 const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
+const { htmlNoCacheHeaders, sendVersionedHtml, setStaticCacheHeaders } = require("./config/assets");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const ASSET_VERSION = process.env.ASSET_VERSION || "1.0.0";
 const PUBLIC_DIR = path.join(__dirname, "public");
 
-const htmlNoCacheHeaders = {
-  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-  Pragma: "no-cache",
-  Expires: "0",
-  "Surrogate-Control": "no-store",
-};
-
 function sendHtml(res, fileName) {
-  res.set(htmlNoCacheHeaders);
-  fs.readFile(path.join(PUBLIC_DIR, fileName), "utf8", (error, html) => {
-    if (error) {
-      logger.error({ err: error, fileName }, "Failed to read HTML file");
-      return res.status(500).send("Unable to load page");
-    }
-
-    return res.type("html").send(html.replace(/__ASSET_VERSION__/g, ASSET_VERSION));
-  });
+  sendVersionedHtml({ res, publicDir: PUBLIC_DIR, fileName, logger });
 }
 
 const allowedOrigins = (process.env.CORS_ORIGINS || "")
@@ -90,6 +75,7 @@ connectDB()
     });
 
     app.get("/admin.html", (req, res) => {
+      res.set(htmlNoCacheHeaders);
       res.redirect("/aura-control-center");
     });
 
@@ -125,18 +111,7 @@ connectDB()
     app.use(express.static(PUBLIC_DIR, {
       etag: true,
       maxAge: 0,
-      setHeaders(res, filePath) {
-        res.setHeader("X-Content-Type-Options", "nosniff");
-        if (filePath.endsWith(".html")) {
-          Object.entries(htmlNoCacheHeaders).forEach(([header, value]) => {
-            res.setHeader(header, value);
-          });
-        } else if (filePath.endsWith(".css") || filePath.endsWith(".js")) {
-          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-        } else {
-          res.setHeader("Cache-Control", "public, max-age=86400");
-        }
-      },
+      setHeaders: setStaticCacheHeaders,
     }));
     app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
       index: false,
@@ -167,15 +142,16 @@ connectDB()
     });
 
     app.get(["/login.html", "/signup.html", "/verify.html", "/index.html"], (req, res) => {
+      res.set(htmlNoCacheHeaders);
       res.redirect("/auth.html");
     });
 
     app.use(notFoundHandler);
     app.use(errorHandler);
 
-    const server =app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
-});
+    const server = app.listen(PORT, () => {
+      logger.info(`Server running on port ${PORT}`);
+    });
 
     const shutdown = (signal) => {
       logger.info({ signal }, "Graceful shutdown requested");
