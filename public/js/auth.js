@@ -252,6 +252,30 @@ const verifyPaymentAndSignup = async (paymentResponse, signupData) => {
   }
 };
 
+document.querySelectorAll(".password-toggle")
+.forEach(button => {
+
+  button.addEventListener("click", () => {
+
+    const input =
+      document.getElementById(
+        button.dataset.target
+      );
+
+    if (!input) return;
+
+    if (input.type === "password") {
+      input.type = "text";
+      button.textContent = "🙈";
+    } else {
+      input.type = "password";
+      button.textContent = "👁";
+    }
+
+  });
+
+});
+
 /* OTP VERIFY */
 const handleVerify = async (event) => {
   event.preventDefault();

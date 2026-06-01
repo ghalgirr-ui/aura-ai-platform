@@ -38,7 +38,11 @@
           <input id="loginEmail" name="email" type="email" autocomplete="email" placeholder="you@aura.ai" required />
 
           <label for="loginPassword">Password</label>
-          <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+
+<div class="password-field">
+  <input  id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required/>
+  <button  type="button" class="password-toggle" data-target="loginPassword">👁</button>
+</div>
 
           <button class="primary-button" type="submit">Sign In</button>
           <p class="login-note">One-time activation payment required only for new account creation.</p>
@@ -57,7 +61,11 @@
           <input id="signupEmail" name="email" type="email" autocomplete="email" placeholder="you@aura.ai" required />
 
           <label for="signupPassword">Password</label>
-          <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="Create a password" required />
+
+<div class="password-field">
+  <input id="signupPassword" name="password" type="password" autocomplete="new-password" placeholder="Create a password" required/>
+  <button type="button" class="password-toggle" data-target="signupPassword">👁</button>
+</div>
 
           <button class="primary-button" type="submit">Create Account (₹2)</button>
           <button id="devTestPayBtn" class="secondary-button" type="button" style="display:none; margin-top:8px;">Dev Test Payment</button>

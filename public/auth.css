@@ -235,6 +235,49 @@ input:focus {
   background: rgba(255,255,255,0.08);
 }
 
+/* PASSWORD TOGGLE */
+
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  color: #94a3b8;
+  cursor: pointer;
+
+  font-size: 18px;
+
+  padding: 0;
+  width: auto;
+  height: auto;
+
+  box-shadow: none;
+}
+
+.password-toggle:hover {
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.password-toggle:focus {
+  outline: none;
+}
+
 .primary-button,
 .secondary-button {
   border: none;
