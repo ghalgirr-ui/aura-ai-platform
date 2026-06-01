@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
 const path = require("path");
+const fs = require("fs");
 const crypto = require("crypto");
 
 const connectDB = require("./config/db");
@@ -19,6 +20,27 @@ const { notFoundHandler, errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const ASSET_VERSION = process.env.ASSET_VERSION || "1.0.0";
+const PUBLIC_DIR = path.join(__dirname, "public");
+
+const htmlNoCacheHeaders = {
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  Pragma: "no-cache",
+  Expires: "0",
+  "Surrogate-Control": "no-store",
+};
+
+function sendHtml(res, fileName) {
+  res.set(htmlNoCacheHeaders);
+  fs.readFile(path.join(PUBLIC_DIR, fileName), "utf8", (error, html) => {
+    if (error) {
+      logger.error({ err: error, fileName }, "Failed to read HTML file");
+      return res.status(500).send("Unable to load page");
+    }
+
+    return res.type("html").send(html.replace(/__ASSET_VERSION__/g, ASSET_VERSION));
+  });
+}
 
 const allowedOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
@@ -60,22 +82,60 @@ logger.info("Attempting to connect to MongoDB...");
 connectDB()
   .then(() => {
     app.get("/aura-control-center", (req, res) => {
-      res.sendFile(path.join(__dirname, "public", "admin.html"));
+      sendHtml(res, "admin.html");
     });
 
     app.get("/aura-control-center/*", (req, res) => {
-      res.sendFile(path.join(__dirname, "public", "admin.html"));
+      sendHtml(res, "admin.html");
     });
 
     app.get("/admin.html", (req, res) => {
       res.redirect("/aura-control-center");
     });
 
-    app.use(express.static(path.join(__dirname, "public"), {
+    app.get("/", (req, res) => {
+      sendHtml(res, "auth.html");
+    });
+
+    app.get("/auth.html", (req, res) => {
+      sendHtml(res, "auth.html");
+    });
+
+    app.get("/dashboard.html", (req, res) => {
+      sendHtml(res, "dashboard.html");
+    });
+
+    app.get("/:page.html", (req, res, next) => {
+      const fileName = `${req.params.page}.html`;
+      const filePath = path.join(PUBLIC_DIR, fileName);
+
+      if (!filePath.startsWith(PUBLIC_DIR + path.sep)) {
+        return next();
+      }
+
+      fs.access(filePath, fs.constants.R_OK, (error) => {
+        if (error) {
+          return next();
+        }
+
+        return sendHtml(res, fileName);
+      });
+    });
+
+    app.use(express.static(PUBLIC_DIR, {
       etag: true,
-      maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
-      setHeaders(res) {
+      maxAge: 0,
+      setHeaders(res, filePath) {
         res.setHeader("X-Content-Type-Options", "nosniff");
+        if (filePath.endsWith(".html")) {
+          Object.entries(htmlNoCacheHeaders).forEach(([header, value]) => {
+            res.setHeader(header, value);
+          });
+        } else if (filePath.endsWith(".css") || filePath.endsWith(".js")) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        } else {
+          res.setHeader("Cache-Control", "public, max-age=86400");
+        }
       },
     }));
     app.use("/uploads", express.static(path.join(__dirname, "uploads"), {
@@ -104,10 +164,6 @@ connectDB()
 
     app.get("/api/test", (req, res) => {
       res.json({ message: "Server working" });
-    });
-
-    app.get("/", (req, res) => {
-      res.sendFile(path.join(__dirname, "public", "auth.html"));
     });
 
     app.get(["/login.html", "/signup.html", "/verify.html", "/index.html"], (req, res) => {
