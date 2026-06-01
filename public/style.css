@@ -2743,6 +2743,11 @@ body.light-mode .input-wrapper {
   backdrop-filter: blur(8px);
 }
 
+body.light-mode #userInput {
+  color: #111827;
+  background: transparent;
+}
+
 body.light-mode .input-wrapper input {
   color: #111827;
   background: transparent;
@@ -2791,10 +2796,16 @@ body.light-mode .feature-btn {
 }
 
 body.light-mode .feature-btn:hover {
-  background: rgba(251,146,60,0.2);
+  background: #ef56046e;;
   color: #ea580c;
   border-color: rgba(249,115,22,0.4);
   transform: translateY(-1px);
+}
+
+body.light-mode .feature-btn.active {
+  background:linear-gradient(135deg, #f97316, #fb923c);
+  color: white;
+  border-color: rgba(249,115,22,0.45);
 }
 
 body.light-mode .message-action-btn {
