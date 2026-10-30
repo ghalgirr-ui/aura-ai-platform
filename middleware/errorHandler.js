@@ -13,7 +13,7 @@ class AppError extends Error {
 }
 
 const notFoundHandler = (req, res, next) => {
-  next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404, "NOT_FOUND"));
+  next(new AppError(`Route not found: ${req.method} ${req.path}`, 404, "NOT_FOUND"));
 };
 
 const errorHandler = (error, req, res, next) => {
@@ -52,7 +52,7 @@ const errorHandler = (error, req, res, next) => {
     err: error,
     requestId,
     method: req.method,
-    path: req.originalUrl,
+    path: req.path,
     statusCode,
     code,
   };

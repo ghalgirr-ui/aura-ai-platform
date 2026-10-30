@@ -880,3 +880,129 @@ button {
 
 /* Aura logo helper */
 .auth-logo-img{width:72px;height:72px;object-fit:contain;border-radius:18px;filter:drop-shadow(0 0 20px rgba(168,85,247,0.5)) drop-shadow(0 0 28px rgba(59,130,246,0.35));}
+
+.forgot-password-link,
+.recovery-link {
+  color: #c4b5fd;
+  justify-self: end;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover,
+.recovery-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.forgot-password-link:focus-visible,
+.recovery-link:focus-visible,
+.recovery-card button:focus-visible,
+.recovery-card input:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 3px;
+}
+
+.recovery-card.auth-card {
+  width: min(100%, 500px);
+  padding: clamp(22px, 5vw, 36px);
+}
+
+.recovery-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.recovery-brand img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 14px;
+}
+
+.recovery-brand-name {
+  color: #c084fc;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.recovery-card h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.7rem, 5vw, 2.25rem);
+  line-height: 1.15;
+}
+
+.recovery-description,
+.recovery-note {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.recovery-description {
+  margin: 0 0 24px;
+}
+
+.recovery-note {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.recovery-form {
+  display: grid;
+  gap: 14px;
+}
+
+.recovery-form .password-toggle {
+  min-width: 48px;
+  min-height: 44px;
+  right: 4px;
+  font-size: 0.82rem;
+}
+
+.recovery-form .password-field input {
+  padding-right: 72px;
+}
+
+.recovery-status {
+  margin: 18px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.recovery-status.error {
+  color: var(--danger);
+}
+
+.recovery-status.success {
+  color: var(--success);
+}
+
+.recovery-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  margin-top: 22px;
+}
+
+.recovery-card [hidden] {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  .recovery-card.auth-card {
+    padding: 22px 18px;
+  }
+
+  .recovery-brand {
+    margin-bottom: 20px;
+  }
+
+  .recovery-form {
+    gap: 12px;
+  }
+}

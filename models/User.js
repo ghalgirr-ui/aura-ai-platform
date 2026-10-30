@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
+  sessionVersion: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+
   isVerified: {
     type: Boolean,
     default: false,
@@ -39,6 +45,16 @@ const userSchema = new mongoose.Schema({
 
   otpExpiry: {
     type: Date,
+  },
+
+  passwordResetTokenHash: {
+    type: String,
+    select: false,
+  },
+
+  passwordResetExpires: {
+    type: Date,
+    select: false,
   },
 
   createdAt: {

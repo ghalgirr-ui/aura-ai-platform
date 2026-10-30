@@ -17,6 +17,7 @@ const logger = pino({
       "OPENROUTER_API_KEY",
       "GEMINI_API_KEY",
       "TAVILY_API_KEY",
+      "BREVO_API_KEY",
     ],
     censor: "[redacted]",
   },

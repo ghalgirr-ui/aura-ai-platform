@@ -9,7 +9,7 @@ const sendEmail = require("../config/mail");
 // const { Resend } = require("resend");
 const User = require("../models/User");
 const PaymentEvent = require("../models/PaymentEvent");
-const { authLimiter, paymentLimiter } = require("../middleware/rateLimiter");
+const { authLimiter, passwordResetLimiter, paymentLimiter } = require("../middleware/rateLimiter");
 const { validateRequest } = require("../middleware/validateRequest");
 const { protect } = require("../middleware/authMiddleware");
 const { incrementAnalytics } = require("../services/analyticsService");
@@ -17,7 +17,91 @@ const logger = require("../utils/logger");
 
 const router = express.Router();
 const OTP_EXPIRY_MINUTES = 10;
+const PASSWORD_RESET_EXPIRY_MINUTES = 15;
+const PASSWORD_RESET_EXPIRY_MS = PASSWORD_RESET_EXPIRY_MINUTES * 60 * 1000;
+const PASSWORD_RESET_RESPONSE = "If an account exists for that email, a password reset link will be sent shortly.";
 const SIGNUP_PRICE_PAISE = Number(process.env.SIGNUP_PRICE_PAISE || 200);
+
+const sanitizeMailErrorValue = (value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  let sanitized = value
+    .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[redacted email]")
+    .replace(/\b[a-f0-9]{64}\b/gi, "[redacted token]")
+    .slice(0, 500);
+
+  const apiKey = process.env.BREVO_API_KEY;
+  if (apiKey) {
+    sanitized = sanitized.split(apiKey).join("[redacted API key]");
+  }
+
+  return sanitized;
+};
+
+const getMailErrorDetails = (error) => {
+  const causes = [
+    error,
+    error && error.cause,
+    ...(error && Array.isArray(error.errors) ? error.errors : []),
+  ].filter(Boolean);
+  const details = {
+    errorType: error && error.name ? error.name : "Error",
+    errorMessage: sanitizeMailErrorValue(
+      error && error.message ? error.message : "Unknown email delivery error"
+    ),
+  };
+  const response = causes.map((cause) => cause.response).find(Boolean);
+  const status = (response && response.status) || causes.map((cause) => cause.status).find(Number.isInteger);
+  const networkError = causes.find((cause) => typeof cause.code === "string");
+
+  if (Number.isInteger(status)) {
+    details.httpStatus = status;
+  }
+  if (Number.isInteger(status) && status >= 400) {
+    details.failureCategory = "brevo_http_error";
+  } else if (networkError) {
+    details.errorCode = sanitizeMailErrorValue(networkError.code);
+    if (typeof networkError.syscall === "string") {
+      details.networkSyscall = sanitizeMailErrorValue(networkError.syscall);
+    }
+    if (
+      typeof networkError.hostname === "string" &&
+      /^[a-z0-9.-]+$/i.test(networkError.hostname)
+    ) {
+      details.networkHostname = networkError.hostname;
+    }
+    if (["ENOTFOUND", "EAI_AGAIN"].includes(networkError.code)) {
+      details.failureCategory = "dns_lookup_failed";
+    } else if (networkError.code === "ECONNRESET") {
+      details.failureCategory = "connection_reset";
+    } else if (
+      ["ETIMEDOUT", "UND_ERR_CONNECT_TIMEOUT", "ECONNABORTED"].includes(networkError.code)
+    ) {
+      details.failureCategory = "connection_timeout";
+    } else {
+      details.failureCategory = "network_error";
+    }
+  }
+
+  const responseBody = response && response.body;
+  if (responseBody && typeof responseBody === "object") {
+    const safeBody = {};
+    for (const key of ["code", "message", "error", "error_description"]) {
+      if (typeof responseBody[key] === "string" || typeof responseBody[key] === "number") {
+        safeBody[key] = sanitizeMailErrorValue(String(responseBody[key]));
+      }
+    }
+    if (Object.keys(safeBody).length > 0) {
+      details.brevoResponse = safeBody;
+    }
+  } else if (response && typeof response.text === "string") {
+    details.brevoResponse = sanitizeMailErrorValue(response.text);
+  }
+
+  return details;
+};
 
 // ✅ Lazy Initialize Razorpay (only when keys are available)
 const getRazorpay = () => {
@@ -32,7 +116,12 @@ const getRazorpay = () => {
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id.toString(), email: user.email, role: user.role || "user" },
+    {
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role || "user",
+      sessionVersion: user.sessionVersion || 0,
+    },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -73,6 +162,183 @@ router.get("/", (req, res) => {
 router.get("/me", protect, (req, res) => {
   return res.json({ user: publicUser(req.user) });
 });
+
+router.post(
+  "/forgot-password",
+  passwordResetLimiter,
+  [
+    body("email").trim().isEmail().withMessage("A valid email is required.").normalizeEmail(),
+  ],
+  validateRequest,
+  (req, res) => {
+    const email = req.body.email?.trim().toLowerCase();
+
+    setImmediate(async () => {
+      let stage = "user_lookup";
+      try {
+        const user = await User.findOne({ email, isVerified: true }).select("_id");
+        if (!user) {
+          return;
+        }
+
+        stage = "frontend_url_validation";
+        const configuredFrontendUrl = process.env.FRONTEND_URL;
+        if (!configuredFrontendUrl) {
+          logger.error("FRONTEND_URL is not configured; password reset email cannot be sent");
+          return;
+        }
+
+        let frontendUrl;
+        try {
+          frontendUrl = new URL(configuredFrontendUrl);
+        } catch {
+          logger.error("FRONTEND_URL is invalid; password reset email cannot be sent");
+          return;
+        }
+
+        if (
+          !["http:", "https:"].includes(frontendUrl.protocol) ||
+          (process.env.NODE_ENV === "production" && frontendUrl.protocol !== "https:") ||
+          frontendUrl.username ||
+          frontendUrl.password
+        ) {
+          logger.error("FRONTEND_URL must be an HTTP(S) URL without credentials and use HTTPS in production");
+          return;
+        }
+
+        const rawToken = crypto.randomBytes(32).toString("hex");
+        const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+        const expiresAt = new Date(Date.now() + PASSWORD_RESET_EXPIRY_MS);
+
+        stage = "reset_token_persistence";
+        await User.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              passwordResetTokenHash: tokenHash,
+              passwordResetExpires: expiresAt,
+            },
+          }
+        );
+
+        const resetUrl = new URL("/reset-password.html", frontendUrl.origin);
+        resetUrl.hash = new URLSearchParams({ token: rawToken }).toString();
+
+        stage = "brevo_send";
+        await sendEmail(
+          email,
+          "Reset your Aura AI password",
+          `
+            <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#f8f8ff;background:#111020;border:1px solid #39255f;border-radius:20px">
+              <p style="margin:0 0 8px;color:#c084fc;font-size:13px;font-weight:bold;letter-spacing:3px;text-transform:uppercase">Aura AI</p>
+              <h1 style="margin:0 0 16px;font-size:26px">Reset your password</h1>
+              <p style="color:#d1d5db;line-height:1.6">We received a request to reset the password for your Aura AI account. Use the button below to choose a new password.</p>
+              <p style="margin:28px 0">
+                <a href="${resetUrl.href}" style="display:inline-block;padding:13px 22px;color:#fff;text-decoration:none;font-weight:bold;background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:10px">Reset password</a>
+              </p>
+              <p style="color:#c4b5fd;line-height:1.6">This link expires in ${PASSWORD_RESET_EXPIRY_MINUTES} minutes and can only be used once.</p>
+              <p style="color:#9ca3af;line-height:1.6">If you did not request a password reset, you can safely ignore this email. Your password will not change.</p>
+            </div>
+          `
+        );
+
+        logger.info("Password reset email sent");
+      } catch (error) {
+        logger.error({ stage, ...getMailErrorDetails(error) }, "Password reset processing failed");
+      }
+    });
+
+    return res.status(202).json({ message: PASSWORD_RESET_RESPONSE });
+  }
+);
+
+router.post(
+  "/verify-reset-token",
+  passwordResetLimiter,
+  [
+    body("token")
+      .isString()
+      .isLength({ min: 64, max: 64 })
+      .isHexadecimal()
+      .withMessage("A valid reset token is required."),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const tokenHash = crypto.createHash("sha256").update(req.body.token).digest("hex");
+      const user = await User.findOne({
+        passwordResetTokenHash: tokenHash,
+        passwordResetExpires: { $gt: new Date() },
+      }).select("_id");
+
+      if (!user) {
+        return res.status(400).json({ error: "This password reset link is invalid or has expired." });
+      }
+
+      return res.json({ success: true, valid: true });
+    } catch (error) {
+      logger.error(
+        { errorType: error && error.name ? error.name : "Error" },
+        "Password reset token verification failed"
+      );
+      return res.status(500).json({ error: "Unable to verify this password reset link." });
+    }
+  }
+);
+
+router.post(
+  "/reset-password",
+  passwordResetLimiter,
+  [
+    body("token")
+      .isString()
+      .isLength({ min: 64, max: 64 })
+      .isHexadecimal()
+      .withMessage("A valid reset token is required."),
+    body("password")
+      .isString()
+      .isLength({ min: 8 })
+      .withMessage("Password must be at least 8 characters.")
+      .custom((password) => Buffer.byteLength(password, "utf8") <= 72)
+      .withMessage("Password must not exceed 72 UTF-8 bytes."),
+  ],
+  validateRequest,
+  async (req, res) => {
+    try {
+      const tokenHash = crypto.createHash("sha256").update(req.body.token).digest("hex");
+      const passwordHash = await bcrypt.hash(req.body.password, 12);
+      const result = await User.updateOne(
+        {
+          passwordResetTokenHash: tokenHash,
+          passwordResetExpires: { $gt: new Date() },
+        },
+        {
+          $set: { password: passwordHash },
+          $inc: { sessionVersion: 1 },
+          $unset: {
+            passwordResetTokenHash: 1,
+            passwordResetExpires: 1,
+          },
+        }
+      );
+
+      if (result.modifiedCount !== 1) {
+        return res.status(400).json({ error: "This password reset link is invalid or has expired." });
+      }
+
+      return res.json({
+        success: true,
+        message: "Password updated successfully. Please sign in with your new password.",
+      });
+    } catch (error) {
+      logger.error(
+        { errorType: error && error.name ? error.name : "Error" },
+        "Password reset failed"
+      );
+      return res.status(500).json({ error: "Unable to reset your password right now." });
+    }
+  }
+);
 
 /* =========================
    💳 RAZORPAY: CREATE ORDER
@@ -656,4 +922,3 @@ router.post(
 });
 
 module.exports = router;
-

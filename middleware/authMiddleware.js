@@ -27,6 +27,12 @@ const protect = async (req, res, next) => {
       return res.status(403).json({ error: "Account not verified" });
     }
 
+    const tokenSessionVersion = payload.sessionVersion === undefined ? 0 : payload.sessionVersion;
+    const userSessionVersion = user.sessionVersion || 0;
+    if (tokenSessionVersion !== userSessionVersion) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+
     req.user = user;
     next();
   } catch (error) {

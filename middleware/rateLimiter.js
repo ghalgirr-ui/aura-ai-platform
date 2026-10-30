@@ -8,6 +8,14 @@ const authLimiter = rateLimit({
   message: { error: "Too many auth requests. Please try again after 15 minutes." },
 });
 
+const passwordResetLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many password recovery requests. Please try again after 15 minutes." },
+});
+
 const chatLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 60,
@@ -48,4 +56,4 @@ const analyticsLimiter = rateLimit({
   message: { error: "Too many analytics requests. Please slow down." },
 });
 
-module.exports = { authLimiter, chatLimiter, uploadLimiter, supportLimiter, paymentLimiter, analyticsLimiter };
+module.exports = { authLimiter, passwordResetLimiter, chatLimiter, uploadLimiter, supportLimiter, paymentLimiter, analyticsLimiter };
